@@ -1,0 +1,76 @@
+name: Send briefing to Telegram
+
+# Rutin brifingi repoya push ettiğinde tetiklenir
+on:
+  push:
+    paths:
+      - 'briefings/**'   # sadece briefings/ klasörüne yazıldığında çalışır
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # son commit'i ve bir öncesini al (değişen dosyayı bulmak için)
+
+      - name: En son brifing dosyasını bul ve Telegram'a gönder
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # briefings/ içindeki en son değiştirilen .md dosyasını bul
+          LATEST=$(git diff --name-only HEAD~1 HEAD -- 'briefings/*.md' | tail -n 1)
+          if [ -z "$LATEST" ]; then
+            LATEST=$(ls -t briefings/*.md 2>/dev/null | head -n 1)
+          fi
+          if [ -z "$LATEST" ] || [ ! -f "$LATEST" ]; then
+            echo "Gönderilecek brifing bulunamadı, çıkılıyor."
+            exit 0
+          fi
+          echo "Gönderiliyor: $LATEST"
+
+          # Telegram tek mesajda en fazla 4096 karakter alır.
+          # Dosyayı 3500 karakterlik parçalara böl ve sırayla gönder.
+          python3 - "$LATEST" <<'PY'
+          import os, sys, urllib.request, urllib.parse, json, time
+
+          token   = os.environ["TELEGRAM_TOKEN"]
+          chat_id = os.environ["TELEGRAM_CHAT_ID"]
+          path    = sys.argv[1]
+
+          with open(path, encoding="utf-8") as f:
+              text = f.read().strip()
+
+          if not text:
+              print("Brifing boş, gönderilmiyor.")
+              sys.exit(0)
+
+          # ~3500 karakterlik parçalara böl (satır sınırlarını koruyarak)
+          MAX = 3500
+          chunks, buf = [], ""
+          for line in text.split("\n"):
+              if len(buf) + len(line) + 1 > MAX:
+                  chunks.append(buf)
+                  buf = ""
+              buf += line + "\n"
+          if buf.strip():
+              chunks.append(buf)
+
+          url = f"https://api.telegram.org/bot{token}/sendMessage"
+          for i, chunk in enumerate(chunks):
+              data = urllib.parse.urlencode({
+                  "chat_id": chat_id,
+                  "text": chunk,
+                  "disable_web_page_preview": "true",
+              }).encode()
+              req = urllib.request.Request(url, data=data)
+              with urllib.request.urlopen(req) as resp:
+                  result = json.load(resp)
+                  if not result.get("ok"):
+                      print("Telegram hatası:", result)
+                      sys.exit(1)
+              print(f"Parça {i+1}/{len(chunks)} gönderildi.")
+              time.sleep(1)   # rate limit'e takılmamak için
+          PY
