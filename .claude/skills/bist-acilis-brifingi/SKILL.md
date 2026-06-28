@@ -43,14 +43,19 @@ ve brifingde not düş.
 - Doğrulanamayan bir iddia varsa "doğrulanamadı" diye işaretle, gerçek gibi sunma.
 
 ### 0.4 Kesinlik skalası (ifade gücü = veri gücü)
-| İfade | Koşul |
-|-------|-------|
-| olabilir / ihtimali var | tek kaynak, zayıf sinyal |
-| görünüyor / beklenebilir | birden çok kaynak, karışık |
-| işaret ediyor | net haber/katalist var |
-| gösteriyor | resmî açıklama / teyitli veri |
+- "olabilir / ihtimali var" → tek kaynak, zayıf sinyal
+- "görünüyor / beklenebilir" → birden çok kaynak, karışık
+- "işaret ediyor" → net haber/katalist var
+- "gösteriyor" → resmî açıklama / teyitli veri
 
 "Kesin yükselir/düşer" gibi ifadeler kullanılmaz — piyasada hiçbir hareket garanti değildir.
+
+### 0.5 Çıktı biçimi — TELEGRAM (kritik)
+Bu brifing Telegram'a düz metin olarak gönderiliyor. Telegram **tablo desteklemez.**
+- **Markdown tablo (`| ... |` ve `|---|` satırları) ASLA kullanma.**
+- Verileri tek satırlık maddeler halinde yaz: `• Etiket: değer (kaynak, tarih)`
+- Başlık için `#` yerine düz büyük harf/emoji kullan (örn. "📊 PİYASA ÖZETİ").
+- Kalın için `**...**` kullanabilirsin ama abartma; render edilmezse de okunur kalsın.
 
 ---
 
@@ -88,40 +93,47 @@ gündem sakin" de ve nedenini belirt.
 
 ---
 
-## 2. Brifing şablonu
+## 2. Brifing şablonu (Telegram dostu, tablosuz)
 
-```markdown
-# BIST Açılış Brifingi — [GÜN, TARİH]
+Aşağıdaki düz metin yapısını kullan. TABLO KULLANMA. Veriler madde halinde.
 
-## 1. Piyasa Özeti
-[Genel hava + beklenen açılış yönü + ana global etkenler. 2–3 cümle, akıcı.
- Örn: "Gece ABD endeksleri ... kapattı; Asya ... seyrediyor. USD/TRY ...
- seviyesinde. Bu tabloda BIST açılışında ... bir hava beklenebilir."]
+```
+📊 BIST AÇILIŞ BRİFİNGİ — [GÜN, TARİH]
 
-## 2. Gündem — Piyasayı Etkileyen Haberler
-[Başlıca haberler, her biri kaynaklı. Madde değil kısa paragraflar tercih et.]
+━━━ PİYASA ÖZETİ ━━━
+[Genel hava + beklenen açılış yönü + ana global etkenler. 2-3 cümle akıcı.]
 
-## 3. İzlenecek Hisseler
-**Yükseliş adayları**
-- [HİSSE] — [katalist + kaynak]
+━━━ TEMEL VERİLER ━━━
+• S&P 500: [değer] ([kaynak, tarih])
+• Brent petrol: [değer] ([kaynak, tarih])
+• Altın (ons): [değer] ([kaynak, tarih])
+• USD/TRY: [değer] ([kaynak, tarih])
+• BIST 100 önceki kapanış: [değer] ([kaynak, tarih])
+• TCMB faizi: [değer] ([kaynak, tarih])
+[Her veri tek satır. Veri yoksa "⚠️ çekilemedi" yaz.]
 
-**Düşüş adayları**
-- [HİSSE] — [katalist + kaynak]
+━━━ GÜNDEM ━━━
+[Başlıca haberler, kısa paragraflar, her biri kaynaklı.]
 
-## 4. Boğa / Ayı Senaryoları
-**[HİSSE/TEMA]**
-- Boğa: [2–3 madde]
-- Ayı: [2–3 madde]
+━━━ İZLENECEK HİSSELER ━━━
+Yükseliş adayları:
+• [HİSSE] — [katalist] ([kaynak])
 
-## 5. Riskler & Takvim
-[Gün içi veri/açıklama takvimi, dikkat edilecek riskler. Yoksa "öne çıkan
- takvim maddesi yok" de.]
+Düşüş adayları:
+• [HİSSE] — [katalist] ([kaynak])
 
----
-Kaynaklar & as-of: [kaynak listesi, tarih/saat]
+━━━ BOĞA / AYI ━━━
+[HİSSE/TEMA]
+  Boğa: [2-3 kısa madde]
+  Ayı: [2-3 kısa madde]
 
-*Bu brifing yatırım tavsiyesi değildir; analitik/bilgilendirme amaçlıdır.
- Kararlarınızı kendi araştırmanızla doğrulayın.*
+━━━ RİSKLER & TAKVİM ━━━
+• [Gün içi veri/açıklama takvimi. Yoksa "öne çıkan takvim maddesi yok".]
+
+━━━━━━━━━━━━━━━━━━
+Kaynaklar: [özet kaynak listesi]
+Bu brifing yatırım tavsiyesi değildir; bilgilendirme amaçlıdır.
+Kararlarınızı kendi araştırmanızla doğrulayın.
 ```
 
 ---
